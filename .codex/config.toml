@@ -1,0 +1,4 @@
+# Codex reads this only after you trust the project. Then run:
+#   codex mcp login cloudflare-observability
+[mcp_servers.cloudflare-observability]
+url = "https://observability.mcp.cloudflare.com/mcp"

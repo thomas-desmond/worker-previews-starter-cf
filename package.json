@@ -1,0 +1,32 @@
+{
+  "name": "worker-previews-starter-cf",
+  "description": "Worker Previews workshop starter (cf CLI + cloudflare.config.ts variant): an Activity Log Worker backed by D1.",
+  "cloudflare": {
+    "label": "Worker Previews Starter (cf)",
+    "products": [
+      "Workers",
+      "D1"
+    ],
+    "categories": [
+      "storage"
+    ],
+    "docs_url": "https://developers.cloudflare.com/workers/previews/",
+    "preview_icon_url": "https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/6c63cca8-354a-4951-45a0-d58769ac6f00/public",
+    "preview_image_url": "https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/aa6158f1-7711-4485-f134-a8c802c0a800/preview",
+    "publish": false
+  },
+  "devDependencies": {
+    "cf": "1.0.0-beta.14",
+    "typescript": "5.9.3",
+    "wrangler": "4.143.0"
+  },
+  "private": true,
+  "scripts": {
+    "cf-typegen": "cf workers types",
+    "check": "tsc && cf deploy --dry-run",
+    "deploy": "cf deploy",
+    "postdeploy": "node scripts/d1-migrate.mjs activity-log-db-cf",
+    "dev": "npm run seedLocalD1 && cf dev",
+    "seedLocalD1": "node scripts/d1-migrate.mjs activity-log-db-cf --local"
+  }
+}
