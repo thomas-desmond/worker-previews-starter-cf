@@ -1,0 +1,35 @@
+AGENTS.md
+  s_b78124f654b320::t_47da68de476734 1-64
+cloudflare.config.ts
+  s_b78124f654b320::t_6f4d92b75fd070 1-42
+package-lock.json
+  s_b78124f654b320::t_26eec0a78031cd 1-3185
+package.json
+  s_b78124f654b320::t_b40a0ed80d09db 1-32
+preview-migrations/0001_create_activity_log.sql
+  s_b78124f654b320::t_cdb9fd668a6a38 1-8
+src/environmentBadge.ts
+  s_b78124f654b320::t_557dfbcbb1b405 1-30
+src/index.ts
+  s_b78124f654b320::t_e77686fe7d2677 1-114
+src/renderNoDatabaseHtml.ts
+  s_b78124f654b320::t_991698ca43c064 1-47
+wrangler.config.ts
+  s_b78124f654b320::t_bf2c4f52be276b 1-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c6663e1d291e5b1590b12b935ea75db02b289033",
+  "prompts": {},
+  "sessions": {
+    "s_b78124f654b320": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_edebc5b72ffeBpU7e28v8AktFB",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Thomas Desmond <24610108+thomas-desmond@users.noreply.github.com>"
+    }
+  }
+}
