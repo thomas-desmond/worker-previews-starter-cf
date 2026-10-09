@@ -1,0 +1,23 @@
+package-lock.json
+  s_02a1b27a12684d::t_de2726e3d19cea 12-14
+src/environmentBadge.ts
+  s_02a1b27a12684d::t_e2e2b501bff515 2-4
+src/index.ts
+  s_02a1b27a12684d::t_efb533f0ba4fdc 35-36,39-40,48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "afa9402a7043e48dce4325fcbc6a628ea5eb140f",
+  "prompts": {},
+  "sessions": {
+    "s_02a1b27a12684d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ede346ffdffeLYAn3TklMuboET",
+        "model": "cloudflare/auto-beta"
+      },
+      "human_author": "Thomas Desmond <24610108+thomas-desmond@users.noreply.github.com>"
+    }
+  }
+}
