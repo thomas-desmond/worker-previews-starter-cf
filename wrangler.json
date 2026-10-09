@@ -1,0 +1,29 @@
+{
+	"compatibility_date": "2025-10-08",
+	"main": "src/index.ts",
+	"name": "worker-previews-starter-cf",
+	"upload_source_maps": true,
+	// Production settings live at the top level.
+	"vars": {
+		"ENVIRONMENT": "production"
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_id": "00000000-0000-0000-0000-000000000000",
+			"database_name": "activity-log-db-cf"
+		}
+	],
+	"observability": {
+		"enabled": true
+	},
+	// Preview settings live here. Previews don't inherit production vars or
+	// bindings: add Preview-only bindings (like the Preview D1 database) here.
+	// A Preview D1 database's migrations are applied with
+	// `cf d1 migrations apply <preview-db-id> --dir preview-migrations`.
+	"previews": {
+		"vars": {
+			"ENVIRONMENT": "preview"
+		}
+	}
+}

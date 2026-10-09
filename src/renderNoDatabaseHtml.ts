@@ -9,8 +9,8 @@ export function renderNoDatabaseHtml(state: DatabaseSetupState, environment: str
 		? "This Preview doesn't have a D1 database bound yet."
 		: "Your Preview database is connected, but it doesn't have the workshop schema yet.";
 	const instructions = missingBinding
-		? `Add a <code>DB</code> D1 binding to the <code>ctx.isPreview</code> branch of
-				<code>cloudflare.config.ts</code>, pointing at a Preview-safe D1 database,
+		? `Add a <code>previews.d1_databases</code> override in
+				<code>wrangler.json</code> pointing at a Preview-safe D1 database,
 				then push the branch again.`
 		: `Apply <code>preview-migrations/</code> to the Preview database with
 				<code>cf d1 migrations apply &lt;preview-db-id&gt; --dir preview-migrations</code>, then refresh this page.

@@ -1,6 +1,6 @@
 {
   "name": "worker-previews-starter-cf",
-  "description": "Worker Previews workshop starter (cf CLI + cloudflare.config.ts variant): an Activity Log Worker backed by D1.",
+  "description": "Worker Previews workshop starter (cf CLI test variant): an Activity Log Worker backed by D1.",
   "cloudflare": {
     "label": "Worker Previews Starter (cf)",
     "products": [
@@ -20,13 +20,16 @@
     "typescript": "5.9.3",
     "wrangler": "4.143.0"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "private": true,
   "scripts": {
-    "cf-typegen": "cf workers types",
-    "check": "tsc && cf deploy --dry-run",
-    "deploy": "cf deploy",
-    "postdeploy": "node scripts/d1-migrate.mjs activity-log-db-cf",
-    "dev": "npm run seedLocalD1 && cf dev",
-    "seedLocalD1": "node scripts/d1-migrate.mjs activity-log-db-cf --local"
+    "cf-typegen": "wrangler types",
+    "check": "tsc && wrangler deploy --dry-run",
+    "deploy": "wrangler deploy",
+    "dev": "npm run seedLocalD1 && wrangler dev",
+    "predeploy": "wrangler d1 migrations apply DB --remote",
+    "seedLocalD1": "wrangler d1 migrations apply DB --local"
   }
 }

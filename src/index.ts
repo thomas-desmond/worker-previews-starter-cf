@@ -32,12 +32,12 @@ export default {
 	async fetch(request, env) {
 		const url = new URL(request.url);
 		const { pathname } = url;
-		// "production" or "preview", from cloudflare.config.ts. Typed loosely
-		// so this works whichever branch the generated types came from.
+		// "production" or "preview", from wrangler.json. Typed loosely because
+		// generated types only see the top-level value.
 		const environment = (env as { ENVIRONMENT?: string }).ENVIRONMENT;
 
-		// A Preview only gets a `DB` binding if the `ctx.isPreview` branch of
-		// `cloudflare.config.ts` declares one — Cloudflare does not fall
+		// A Preview only gets a `DB` binding if `wrangler.json` has a
+		// `previews.d1_databases` override for it — Cloudflare does not fall
 		// back to the production binding. Without that override, `env.DB` is
 		// `undefined` here, not an empty/unmigrated database. This is the
 		// isolation mechanic the workshop's D1-override step is about: no
@@ -45,7 +45,7 @@ export default {
 		if (!env.DB) {
 			if (pathname.startsWith("/api/")) {
 				return json(
-					{ error: "No D1 database bound. Add a DB binding to the ctx.isPreview branch of cloudflare.config.ts." },
+					{ error: "No D1 database bound. Add a previews.d1_databases override." },
 					{ status: 503 },
 				);
 			}

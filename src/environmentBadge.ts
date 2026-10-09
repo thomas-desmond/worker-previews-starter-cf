@@ -1,7 +1,7 @@
 // A small label showing where this page is being served from. The value
-// comes from the `ENVIRONMENT` var: "production" in the production branch of
-// cloudflare.config.ts and "preview" in its `ctx.isPreview` branch. Previews
-// don't inherit production vars, so without it the value is missing.
+// comes from the `ENVIRONMENT` var: "production" at the top level of
+// wrangler.json and "preview" in the `previews` block. Previews don't
+// inherit production vars, so without `previews.vars` the value is missing.
 
 type BadgeKind = "production" | "preview" | "unknown";
 

@@ -1,14 +1,14 @@
 # Agent instructions
 
-This repo is a Cloudflare Worker with a D1 database. It's configured with `cloudflare.config.ts` and managed with the `cf` CLI (`npx cf …`, pinned in `package.json`). There's no `wrangler.json`: don't create one, and don't run `wrangler` commands. `wrangler` is only installed as cf's bundler. To find a cf command, run `npx cf cli search "<what you want to do>"`. Every branch you push gets its own [Worker Preview](https://developers.cloudflare.com/workers/previews/): an isolated copy of the Worker with its own URL, bindings, and logs. Workers Builds posts the Preview URL on the branch's pull request. Use the Preview to check your own work before a human reviews it.
+This repo is a Cloudflare Worker with a D1 database. It's configured with `wrangler.json`, which Wrangler uses to deploy it and Workers Builds uses to build it. For account and resource commands (signing in, D1 databases, deleting things), use the `cf` CLI (`npx cf …`, pinned in `package.json`). To find a cf command, run `npx cf cli search "<what you want to do>"`. Don't run `cf dev`, `cf build`, or `cf deploy` here, and don't create a `cloudflare.config.ts`: this project isn't migrated to cf. Every branch you push gets its own [Worker Preview](https://developers.cloudflare.com/workers/previews/): an isolated copy of the Worker with its own URL, bindings, and logs. Workers Builds posts the Preview URL on the branch's pull request. Use the Preview to check your own work before a human reviews it.
 
 ## Rules
 
-- **`cloudflare.config.ts` returns one config for production and one for Previews.** The `if (ctx.isPreview)` branch is the Previews' config; the final `return` is production's. Previews don't inherit production vars or bindings. When a Preview needs a binding, add it to the `ctx.isPreview` branch's `env`. Never point a binding in that branch at a production resource.
-- **Never write to production data.** Don't run `cf d1 query`, `cf d1 migrations apply`, or any other write against a production database. Production is the `DB` binding in the production `return` of `cloudflare.config.ts` (`activity-log-db-cf` by default). cf D1 commands take a database ID, so check with `npx cf d1 list` which database an ID belongs to before you write to it.
+- **Production settings live at the top level of `wrangler.json`. Preview settings live in its `previews` block.** Previews don't inherit production vars or bindings. When a Preview needs a binding, add it under `previews`. Never point a `previews` binding at a production resource.
+- **Never write to production data.** Don't run `cf d1 query`, `cf d1 migrations apply`, or any other write against a production database. Production is the `database_name` in the top-level `d1_databases` (`activity-log-db-cf` by default). cf D1 commands take a database ID, so check with `npx cf d1 list` which database an ID belongs to before you write to it.
 - **Previews and production never share a schema path.** `migrations/` is production's, applied automatically on deploy. `preview-migrations/` is the Preview database's, applied only with `--dir preview-migrations` against the Preview database's ID. Never copy a file from one folder to the other.
 - **Don't edit a database schema to make a bug go away.** Fix the code. It has to work with production's schema and the Preview's.
-- **Never merge a pull request, deploy to production, or run `cf deploy` (or `npm run deploy`) unless a human explicitly tells you to.** Pushing to a PR branch is fine: it only updates that branch's Preview. `npm run check` runs `cf deploy --dry-run`, which doesn't deploy anything, so it's fine.
+- **Never merge a pull request, deploy to production, or run `wrangler deploy` (or `npm run deploy`) unless a human explicitly tells you to.** Pushing to a PR branch is fine: it only updates that branch's Preview. `npm run check` runs `wrangler deploy --dry-run`, which doesn't deploy anything, so it's fine.
 
 ## Finding the Preview URL
 
@@ -22,7 +22,7 @@ Workers Builds builds every push to a PR branch and comments on the PR with the 
 
 The Preview D1 database is shared by every Preview of this Worker. Its migrations live in `preview-migrations/`. `cf d1 migrations apply` takes the database ID and a `--dir`, so the ID decides which database you change.
 
-1. Take the `id` of the `DB` binding in the `ctx.isPreview` branch of `cloudflare.config.ts`. Confirm with `npx cf d1 list` that it belongs to the Preview database, not production's `activity-log-db-cf`. If it doesn't, or the branch has no `DB`, stop and tell the human.
+1. Take the `database_id` from `previews.d1_databases` in `wrangler.json`. Confirm with `npx cf d1 list` that it belongs to the Preview database, not production's `activity-log-db-cf`. If it doesn't, or `previews` has no D1 binding, stop and tell the human.
 2. Apply: `npx cf d1 migrations apply <preview-db-id> --dir preview-migrations`. Never run it with `--dir migrations` or against production's ID.
 3. D1 records applied migrations, so running it again only applies new files. Because the database is shared, a migration applied for one branch shows up in every Preview.
 
@@ -38,7 +38,7 @@ The app's JSON API:
 | `POST` | `/api/entries` | Add an entry. Body: `{"text": "..."}` |
 | `DELETE` | `/api/entries/<id>` | Delete the entry with that `id`. |
 
-A full check covers all three: add an entry, list it, delete it, and list again to confirm it's gone. Report the status codes and response bodies. A `409` means the Preview database is bound but its migrations haven't been applied. An HTML page saying no database is bound means the `ctx.isPreview` branch of `cloudflare.config.ts` has no D1 binding.
+A full check covers all three: add an entry, list it, delete it, and list again to confirm it's gone. Report the status codes and response bodies. A `409` means the Preview database is bound but its migrations haven't been applied. An HTML page saying no database is bound means the `previews` block has no D1 binding.
 
 ## Reading Preview logs
 
@@ -47,7 +47,7 @@ When a request fails, read that Preview's logs instead of guessing. The Worker l
 Use the **Cloudflare Workers Observability MCP server** (`cloudflare-observability`, configured in this repo for common agents). It's read-only.
 
 - Filter on all three fields:
-  - `$workers.scriptName` = the Worker `name` in `cloudflare.config.ts`
+  - `$workers.scriptName` = the Worker `name` in `wrangler.json`
   - `$workers.preview.slug` = the Preview's name: the branch name, as it appears at the start of the Preview URL's hostname
   - `$metadata.level` = `error`, or `event` = the event name
 - Use `view: "events"` and a timeframe covering the last hour. Logs can take a minute to appear.
